@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GPS Route Viewer</title>
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARV4diMv1oEUD3AkgZj5UBoMFN2G0kuVc&callback=initMap&libraries=maps,marker&v=beta"></script>
+  <style>
+    html, body, #map { 
+      height: 100%; 
+      margin: 0; 
+      padding: 0; 
+    }
+  </style>
+  <script>
+    async function initMap() {
+      console.log("initMap gestart...");
+      try {
+        // Fetch GPS-data van de ESP32
+        const response = await fetch("http://192.168.1.23/gps");
+        console.log("Fetch status:", response.status);
+
+        const points = await response.json(); // array van objecten
+        console.log("Aantal punten:", points.length);
+        console.log("Voorbeeld eerste punt:", points[0]);
+
+        if(points.length === 0) {
+          console.warn("Geen GPS-punten ontvangen");
+          return;
+        }
+
+        // Kaart aanmaken, centrum op eerste punt
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: parseFloat(points[0].lat), lng: parseFloat(points[0].lon) },
+          zoom: 15,
+        });
+
+        // Polyline pad aanmaken
+        const path = [];
+
+        points.forEach((p, index) => {
+          const lat = parseFloat(p.lat);
+          const lng = parseFloat(p.lon);
+          path.push({ lat, lng });
+
+          // Marker met tooltip die alle velden toont
+          const infoContent = `
+            <b>Punt ${index + 1}</b><br>
+            Satellites: ${p.nr_sats}<br>
+            Hadoop: ${p.hadoop}<br>
+            Lat: ${p.lat}, Lon: ${p.lon}<br>
+            Altitude: ${p.alt}<br>
+            Timestamp: ${p.datetime}
+          `;
+
+          const marker = new google.maps.Marker({
+            position: { lat, lng },
+            map: map,
+            title: `Punt ${index + 1}`
+          });
+
+          // InfoWindow tonen bij click
+          const infoWindow = new google.maps.InfoWindow({
+            content: infoContent
+          });
+
+          marker.addListener("click", () => {
+            infoWindow.open(map, marker);
+          });
+        });
+
+        // Route tekenen met polyline
+        new google.maps.Polyline({
+          path: path,
+          map: map,
+          strokeColor: "red",
+          strokeWeight: 4,
+        });
+
+      } catch (error) {
+        console.error("❌ Fout tijdens ophalen of verwerken van GPS-data:", error);
+      }    
+    }
+  </script>
+</head>
+<body>
+  <div id="map"></div>
+</body>
+</html>

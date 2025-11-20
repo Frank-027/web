@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Temperatuur & Vochtigheid</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 40px; }
+    .waarde { font-size: 2em; }
+  </style>
+</head>
+<body>
+  <h1>Actuele metingen</h1>
+  <div class="waarde" id="temp">Temperatuur: ... °C</div>
+  <div class="waarde" id="hum">Vochtigheid: ... %</div>
+  <div id="time"></div>
+
+  <script>
+    async function updateData() {
+      const response = await fetch("data.json");
+      const data = await response.json();
+      document.getElementById("temp").innerText = `Temperatuur: ${data.temperature} °C`;
+      document.getElementById("hum").innerText = `Vochtigheid: ${data.humidity} %`;
+      document.getElementById("time").innerText = `Laatste update: ${data.timestamp}`;
+    }
+    updateData();
+    setInterval(updateData, 5000);
+  </script>
+</body>
+</html>

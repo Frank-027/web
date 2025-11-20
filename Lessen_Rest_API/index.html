@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>ESP32 LED Control</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 40px; }
+        button { margin: 10px; padding: 10px 30px; font-size: 16px; }
+    </style>
+    <script>
+        const espIP = "192.168.1.48";  // <-- vervang door het IP van je ESP32
+
+        function sendRequest(url) {
+        fetch(url)
+            .then(response => response.text())
+            .then(text => console.log(text))
+            .catch(err => console.error("Fout:", err));
+        }
+    </script>
+</head>
+<body>
+  <h2>Bedien de LEDs op de ESP32</h2>
+  <p>
+    <button onclick="sendRequest(`http://${espIP}/led1/on`)">LED1 ON</button>
+    <button onclick="sendRequest(`http://${espIP}/led1/off`)">LED1 OFF</button>
+  </p>
+  <p>
+    <button onclick="sendRequest(`http://${espIP}/led2/on`)">LED2 ON</button>
+    <button onclick="sendRequest(`http://${espIP}/led2/off`)">LED2 OFF</button>
+  </p>
+</body>
+</html>

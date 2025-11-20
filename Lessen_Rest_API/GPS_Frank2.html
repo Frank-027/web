@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GPS Route Viewer</title>
+  <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARV4diMv1oEUD3AkgZj5UBoMFN2G0kuVc&callback=initMap&libraries=maps,marker&v=beta"></script>
+  <style>
+    html, body, #map { 
+      height: 100%; 
+      margin: 0; 
+      padding: 0; 
+    }
+  </style>
+  <script>
+    async function initMap() {
+      console.log("initMap gestart...");
+      try {
+        // Fetch GPS-data van de ESP32
+        const response = await fetch("http://192.168.1.23/gps");
+        console.log("Fetch status:", response.status);
+
+        const points = await response.json();
+        console.log("Aantal punten:", points.length);
+
+        // Kaart aanmaken
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: points[0].lat, lng: points[0].lon },
+          zoom: 15,
+        });
+
+        // Markers tekenen met AdvancedMarkerElement
+        points.forEach((p) => {
+            new google.maps.Marker({
+                position: { lat: p.lat, lng: p.lon },
+                map: map,
+                title: `Lat: ${p.lat}, Lon: ${p.lon}`
+            });
+        });
+
+        // Route tekenen met polyline
+        const path = points.map(p => ({ lat: p.lat, lng: p.lon }));
+        new google.maps.Polyline({
+          path: path,
+          map: map,
+          strokeColor: "red",
+          strokeWeight: 4,
+        });
+
+      } catch (error) {
+        console.error("❌ Fout tijdens ophalen of verwerken van GPS-data:", error);
+      }    
+    }
+  </script>
+</head>
+<body>
+  <div id="map"></div>
+</body>
+</html>

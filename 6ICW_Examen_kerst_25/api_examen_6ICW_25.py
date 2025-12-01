@@ -46,7 +46,8 @@ VALID_API_KEYS = {
     "C9L4M5": {"test": 0, "prod": 0},
     "D3N6P7": {"test": 0, "prod": 0},
     "E2R8T9": {"test": 0, "prod": 0},
-    "F4U1V3": {"test": 0, "prod": 0}
+    "F4U1V3": {"test": 0, "prod": 0},
+    "G5X9A2": {"test": 0, "prod": 0}
 }
 
 # Koppel de echte namen aan de API-key
@@ -56,7 +57,8 @@ STUDENT_NAMES = {
     "C9L4M5": "Mats Dumonceau",
     "D3N6P7": "Maarten Geets",
     "E2R8T9": "Dylan Lieser",
-    "F4U1V3": "Kevin Verlinden"
+    "F4U1V3": "Kevin Verlinden",
+    "G5X9A2": "Frank Demonie"
 }
 
 ADMIN_KEY = "admin123"
